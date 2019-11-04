@@ -89,17 +89,6 @@ def build_model():
 	# Calculate predictions.
 	top_k_op = tf.nn.in_top_k(logits, labels, 1)
 
-	# Reweight update
-	# with tf.device('/cpu:0'):
-	# 	beta = tf.get_variable(name='beta', shape=[FLAGS.class_num], initializer=tf.ones_initializer(), dtype=tf.float32, trainable=False)
-
-	# max_re_weight = tf.constant(name='max_re_weight', value = 1.5, dtype = tf.float32)
-	# re_weight = tf.minimum(max_re_weight, tf.reduce_mean(tf.gather(params=beta, indices=labels)))
-	# tf.summary.scalar('re_weight', re_weight)
-
-	# re_weight_loss = tf.reduce_mean(tf.multiply(cross_entropy, tf.gather(params=beta, indices=labels)))
-	# coefficient = tf.gather(params=beta, indices=labels)
-
 	# Calculate loss.
 	loss, cross_entropy = cifar10.loss(logits, labels)
 	tf.summary.histogram('cross_entropy', cross_entropy)
@@ -262,8 +251,6 @@ def main(argv):
 		process_worker()
 	else:
 		print("ArgumentError:argument <job_name> must be ps or worker")
-	
-
 
 if __name__ == "__main__":
   tf.app.run()

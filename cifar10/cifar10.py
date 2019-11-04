@@ -240,10 +240,6 @@ def inference(images):
     local4 = tf.nn.relu(tf.matmul(local3, weights) + biases, name=scope.name)
     _activation_summary(local4)
 
-  # linear layer(WX + b),
-  # We don't apply softmax here because
-  # tf.nn.sparse_softmax_cross_entropy_with_logits accepts the unscaled logits
-  # and performs the softmax internally for efficiency.
   with tf.variable_scope('softmax_linear') as scope:
     weights = _variable_with_weight_decay('weights', [192, NUM_CLASSES],
                                           stddev=1/192.0, wd=0.004)
@@ -303,10 +299,7 @@ def inference2(images):
   # pool2 - [None, 8, 8, 64]
   pool2 = tf.nn.max_pool(norm2, ksize=[1, 3, 3, 1],
                          strides=[1, 2, 2, 1], padding='SAME', name='pool2')
-  # linear layer(WX + b),
-  # We don't apply softmax here because
-  # tf.nn.sparse_softmax_cross_entropy_with_logits accepts the unscaled logits
-  # and performs the softmax internally for efficiency.
+
   with tf.variable_scope('softmax_linear') as scope:
     # Move everything into depth so we can perform a single matrix multiply.
     # dim = reshape.get_shape()[1].value
