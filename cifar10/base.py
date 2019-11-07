@@ -21,6 +21,8 @@ import time
 import sys   # sys.getsizeof()
 import threading
 
+import logger
+
 MIN_TIME_TO_COMMIT = 10 # avoid frequent commit
 
 COMMUNICATION_SLEEP = 0
@@ -67,56 +69,19 @@ WINDOW_LENGHTH_OF_LOSS = 10 # the length of windows for the global loss, used to
 # CONVERGE_VAR = 0.001 # when the variance of loss in WINDOW_LENGHTH_OF_LOSS less equal to CONVERGE_VAR => converge
 CONVERGE_VAR = 0.0
 
+class Communicator(object):
+	def __init__(self, host, port, role, buffsize=1024):
+		self.skt = socket(AF_INET,SOCK_STREAM)
+		addr = (host, port)
+		if role == 'wk':
+			self.skt.connect(addr)
+			self.buffsize = buffsize
+		elif role == 'ps':	
+			self.skt.bind(addr)
+			self.skt.listen(3)
+		else:
+			raise ValueError("Role %s is not allowed" % role)
 
-class STRAIN_WK(object):
-	def __init__(self, 
-		_worker_index = 0, 
-		_check_period = 60.0, 
-		_init_base_time_step = 20.0, 
-		_max_steps = 1000000, 
-		_batch_size = 128, 
-		_class_num = 10, # must be given
-		_base_dir = None,
-		_host = 'localhost',
-		_port_base = 14200,
-		_s = None):
-
-		self.No = int(_worker_index)
-		self.check_period = float(_check_period)
-		self.base_time_step = float(_init_base_time_step) # initial , commit update per 20s
-		self.max_steps = int(_max_steps)
-		self.batch_size = int(_batch_size)
-		self.class_num = int(_class_num) #
-		self.base_dir = _base_dir
-		self.host = _host
-		self.port_base = int(_port_base)
-
-        ##########################################################
-
-		self.commit_cnt = 0 # record the total commit number
-		self.class_cnt = [0 for _ in xrange(self.class_num)]
-
-		## for prediction
-		self.predict_cnt = [0 for _ in xrange(self.class_num)]
-		self.predict_rst = [0 for _ in xrange(self.class_num)]
-		self.eval_rst = [0.0 for _ in xrange(self.class_num + 1)] # last elem is the overall accuracy
-
-		# log for the worker
-		self.f_log = open(os.path.join(self.base_dir + 'wk_%d_usp.txt' % (self.No)), 'w')
-		self.f_pre = open(os.path.join(self.base_dir + 'wk_%d_usp_pred.txt' % (self.No)), 'w')
-
-		# store the parameters
-		self.parameter = []  # a list of parameters, parameters are np.array
-		self.para_shape = []
-
-		self.commit_overhead = 0
-
-	def log(self, s):
-		print('%f: %s' % (time.time() + self.time_align - self.timer_from_PS, s))
-
-	def str2list(self, s):
-		return [float(x) for x in s.split('[')[1].split(']')[0].split(',')]
-	
 	def sendmsg(self, s):
 		''' send long message, protocol 
 			1: send len; 2: recv start; 3: send msg; 4: recv ok		
@@ -145,6 +110,74 @@ class STRAIN_WK(object):
 		self.skt.sendall('OK')
 		# print s
 		return s
+
+	def recv(self, buffsize=None):
+		buffsize = buffsize if buffsize else self.buffsize
+		return self.skt.recv(buffsize)
+
+	def sendall(self, s):
+		self.skt.sendall(s)
+
+	def close():
+		self.skt.close()
+
+class Worker(object):
+	def __init__(self, 
+		_worker_index = 0, 
+		_check_period = 60.0, 
+		_init_base_time_step = 20.0, 
+		_max_steps = 1000000, 
+		_batch_size = 128, 
+		_class_num = 10, # must be given
+		_base_dir = None,
+		_host = 'localhost',
+		_port_base = 14200,
+		_s = None,
+		logger_name = None):
+
+		self.No = int(_worker_index)
+		self.check_period = float(_check_period)
+		self.base_time_step = float(_init_base_time_step) # initial , commit update per 20s
+		self.max_steps = int(_max_steps)
+		self.batch_size = int(_batch_size)
+		self.class_num = int(_class_num) #
+		self.base_dir = _base_dir
+		self.host = _host
+		self.port_base = int(_port_base)
+
+		self.logger = logger.getLogger(logger_name)
+
+        ##########################################################
+
+		self.commit_cnt = 0 # record the total commit number
+		self.class_cnt = [0 for _ in xrange(self.class_num)]
+
+		## for prediction
+		self.predict_cnt = [0 for _ in xrange(self.class_num)]
+		self.predict_rst = [0 for _ in xrange(self.class_num)]
+		self.eval_rst = [0.0 for _ in xrange(self.class_num + 1)] # last elem is the overall accuracy
+
+		# log for the worker
+		self.f_log = open(os.path.join(self.base_dir + 'wk_%d_usp.txt' % (self.No)), 'w')
+		self.f_pre = open(os.path.join(self.base_dir + 'wk_%d_usp_pred.txt' % (self.No)), 'w')
+
+		# store the parameters
+		self.parameter = []  # a list of parameters, parameters are np.array
+		self.para_shape = []
+
+		self.commit_overhead = 0
+
+	def log(self, s):
+		self.logger.info('%f: %s' % (time.time() + self.time_align - self.timer_from_PS, s))
+
+	def str2list(self, s):
+		return [float(x) for x in s.split('[')[1].split(']')[0].split(',')]
+	
+	def sendmsg(self, s):
+		return self.skt.sendmsg(s)
+
+	def recvmsg(self):
+		return self.skt.recvmsg()
 
 	def default_func():
 		'''
@@ -185,11 +218,8 @@ class STRAIN_WK(object):
 		
 	def connect2PS(self):
 		# connect to the PS
-		addr = (self.host, self.port_base + self.No)
-		self.skt = socket(AF_INET,SOCK_STREAM)
-		self.skt.connect(addr)
-		self.buffsize = 1024
-		msg = self.skt.recv(self.buffsize).split(',')
+		self.skt = Communicator(self.host, self.port_base + self.No, 'wk', self.buffsize)
+		msg = self.skt.recv().split(',')
 		self.timer_from_PS = float(msg[0])
 		self.time_align = float(msg[1]) - time.time()
 
@@ -204,7 +234,6 @@ class STRAIN_WK(object):
 				self.para_shape.append(shape)	
 				msg = tmp.tobytes()
 				self.sendmsg(msg)
-
 				# debug
 				self.log('Communication size: %fB' % (sys.getsizeof(msg)))
 				self.log('Storage size: %fB' % (sys.getsizeof(tmp)))
@@ -404,50 +433,24 @@ class PSThread(threading.Thread):
 	 	self.isCheckOrStop = 0	# 0: normal; 1: check, stop; 2: restart; -1: exit
 	 	self.go_on = True	
 
+	 	self.logger = logger.getLogger("PS")
+
 	def str2list(self, s):
 		return [float(x) for x in s.split('[')[1].split(']')[0].split(',')]
 			
 	def sendmsg(self, s):
-		''' send long message, protocol 
-			# -> len
-			# <- start
-			# -> msg
-			# <- ok
-		'''
-		length = len(s)
-		self.skt_client.sendall(str(length))
-		self.skt_client.recv(self.buffsize)
-		self.skt_client.sendall(s)
-		self.skt_client.recv(self.buffsize)
+		return self.skt.sendmsg(s)
 
 	def recvmsg(self):
-		''' recv long message, protocol 
-			# <- len
-			# -> start
-			# <- msg
-			# -> ok
-		'''
-		s = ''
-		length = int(self.skt_client.recv(self.buffsize))
-		self.skt_client.sendall('Start')
-		while(length > 0):
-			msg = self.skt_client.recv(self.buffsize)
-			s += msg
-			length -= len(msg)
-		self.skt_client.sendall('OK')
-		# print s
-		return s
+		return self.skt.recvmsg()
 
 	def log(self, s):
 		global START_TIME
-		print('%f: %s' % (time.time() - START_TIME, s))
+		self.logger.info('%f: %s' % (time.time() - START_TIME, s))
 
 	# listener starts, listen to the worker
 	def run(self):
-		self.skt = socket(AF_INET,SOCK_STREAM)		
-		addr = (self.host, self.port_base + self.index)		
-		self.skt.bind(addr)
-		self.skt.listen(3) # the max allowed tcp requre number.	
+		self.skt = Communicator(self.host, self.port_base + self.index, 'ps', self.buffsize)
 		while True:
 			self.listen()
 		self.skt.close()
