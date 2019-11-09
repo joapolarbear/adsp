@@ -10,16 +10,15 @@ import os
 import math
 import random
 from tensorflow.contrib import *
-
 import copy
-
 from socket import *
-# import json  # for transport structured data
 from scipy.optimize import curve_fit  # for curve fit
-
 import time
 import sys   # sys.getsizeof()
 import threading
+
+from .base import Worker
+
 
 MIN_TIME_TO_COMMIT = 10 # avoid frequent commit
 
@@ -68,198 +67,26 @@ WINDOW_LENGHTH_OF_LOSS = 10 # the length of windows for the global loss, used to
 CONVERGE_VAR = 0.0
 
 
-class STRAIN_WK(object):
-	def __init__(self, 
-		_worker_index = 0, 
-		_check_period = 60.0, 
-		_init_base_time_step = 20.0, 
-		_max_steps = 1000000, 
-		_batch_size = 128, 
-		_class_num = 10, # must be given
-		_base_dir = None,
-		_host = 'localhost',
-		_port_base = 14200,
-		_s = None):
-
-		self.No = int(_worker_index)
-		self.check_period = float(_check_period)
-		self.base_time_step = float(_init_base_time_step) # initial , commit update per 20s
-		self.max_steps = int(_max_steps)
-		self.batch_size = int(_batch_size)
-		self.class_num = int(_class_num) #
-		self.base_dir = _base_dir
-		self.host = _host
-		self.port_base = int(_port_base)
-
-        ##########################################################
-
-		self.commit_cnt = 0 # record the total commit number
-		self.class_cnt = [0 for _ in xrange(self.class_num)]
-
-		## for prediction
-		self.predict_cnt = [0 for _ in xrange(self.class_num)]
-		self.predict_rst = [0 for _ in xrange(self.class_num)]
-		self.eval_rst = [0.0 for _ in xrange(self.class_num + 1)] # last elem is the overall accuracy
-
-		# log for the worker
-		self.f_log = open(os.path.join(self.base_dir + 'wk_%d_usp.txt' % (self.No)), 'w')
-		self.f_pre = open(os.path.join(self.base_dir + 'wk_%d_usp_pred.txt' % (self.No)), 'w')
-
-		# store the parameters
-		self.parameter = []  # a list of parameters, parameters are np.array
-		self.para_shape = []
-
-		self.commit_overhead = 0
-
-	def log(self, s):
-		print('%f: %s' % (time.time() + self.time_align - self.timer_from_PS, s))
-
-	def str2list(self, s):
-		return [float(x) for x in s.split('[')[1].split(']')[0].split(',')]
-	
-	def sendmsg(self, s):
-		''' send long message, protocol 
-			1: send len; 2: recv start; 3: send msg; 4: recv ok		
-		'''
-		time.sleep(COMMUNICATION_SLEEP)
-		tmp_time = time.time()
-		length = len(s)
-		self.skt.sendall(str(length))
-		self.skt.recv(self.buffsize)
-		self.skt.sendall(s)
-		self.skt.recv(self.buffsize)
-		return time.time() - tmp_time
-
-	def recvmsg(self):
-		''' recv long message, protocol 
-			1: recv len; 2: send start; 3: recv msg; 4: send ok
-		'''
-		time.sleep(COMMUNICATION_SLEEP)
-		s = ''
-		length = int(self.skt.recv(self.buffsize))
-		self.skt.sendall('Start')
-		while(length > 0):
-			msg = self.skt.recv(self.buffsize)
-			s += msg
-			length -= len(msg)
-		self.skt.sendall('OK')
-		# print s
-		return s
-
-	def default_func():
-		'''
-			default fetch data function, user should define their own fetch data function
-			train_images, train_labels, eval_images, image_labels, test_images, test_labels = self.func_fetch_data(
-				Train = False, 
-				Eval = False, 
-				Test = True, 
-				batch_size = self.final_batch_size)
-			* batch_size is optional, if defined, each time fetch data, reshape the input nodes
-		'''
-		pass
-
-	def register(self, 
-		_session = None, 
-		_func_fetch_data = default_func,
-		_merged = None,
-		_train_op = None,
-		_loss = None,
-		_global_step = None,
-		_feed_X = None,
-		_feed_Y = None,
-		_feed_prediction = None,
-		_top_k_op = None,
-		_beta = None
-		):
-		self.func_fetch_data = _func_fetch_data
-		self.sess = _session
-
-		self.merged =  _merged
-		self.train_op = _train_op
-		self.loss = _loss
-		self.global_step = _global_step
-		self.X = _feed_X
-		self.Y = _feed_Y
-		self.feed_prediction = _feed_prediction # addional input
-		self.top_k_op = _top_k_op
-		
-	def connect2PS(self):
-		# connect to the PS
-		addr = (self.host, self.port_base + self.No)
-		self.skt = socket(AF_INET,SOCK_STREAM)
-		self.skt.connect(addr)
-		self.buffsize = 1024
-		msg = self.skt.recv(self.buffsize).split(',')
-		self.timer_from_PS = float(msg[0])
-		self.time_align = float(msg[1]) - time.time()
-
-		self.skt.sendall("Recv start_t")
-		msg = self.skt.recv(self.buffsize)
-		if('OK' in msg):
-			# if the worker is the first worker to connect PS, upload the parameters
-			for v in tf.trainable_variables():
-				tmp = v.eval(session = self.sess)
-				self.parameter.append(tmp)
-				shape = v.get_shape()
-				self.para_shape.append(shape)	
-				msg = tmp.tobytes()
-				self.sendmsg(msg)
-
-				# debug
-				self.log('Communication size: %fB' % (sys.getsizeof(msg)))
-				self.log('Storage size: %fB' % (sys.getsizeof(tmp)))
-				self.log('Storage size: %fB' % (sys.getsizeof(self.parameter[-1])))
-				self.log("Shape: %s" % (str(shape)))
-				print
-	
-			self.sendmsg('$')
-		else:
-			# if the worker is not the first worker to connect PS, load the parameters
-			self.skt.sendall('Load')
-			# Receive  theoverall parameters from the PS
-			for v in tf.trainable_variables():
-				msg = self.recvmsg()
-				tmp = np.copy(np.frombuffer(msg, dtype=np.float32))
-				shape = v.get_shape()
-				self.para_shape.append(shape)
-				self.parameter.append(tmp.reshape(shape))
-
-				# debug
-				self.log('Communication size: %fB' % (sys.getsizeof(msg)))
-				self.log('Storage size: %fB' % (sys.getsizeof(tmp)))
-				self.log("Shape: %s" % (str(shape)))
-				print	
-			self.skt.recv(self.buffsize)
-			# update the local mode
-			index = 0
-			for v in tf.trainable_variables():
-				v.load(self.parameter[index], self.sess)
-				index += 1
-		self.log("Worker %d successfully connct to the "
-		 	"parameter server [%s:%d]" % (self.No, self.host, (self.port_base + self.No)))
-
-	def run(self, simulate = 0):
-		self.connect2PS()
+class STRAIN_WK(Worker):
+	def run(self, _simulate = 0):		
+		time_point_after_a_commit = time.time()
 		ep = 0
-		time_after_a_commit = time.time()
-
 		si = 0 # the number of local updates
 		self.notWait = False
 		# while not self.sess.should_stop():
 		while (ep < self.max_steps):
-			time_step_start = time.time()
+			time_point_step_start = time.time()
 			ep += 1
 			si += 1
-			# if(simulate):
-			time.sleep(simulate)
+			time.sleep(_simulate)
 			train_X, train_Y, eval_X, eval_Y, test_X, test_Y = self.func_fetch_data(Train = True, Eval = True, Test = True)
 			cur_train_labels_list = train_Y.tolist()
 			# train one mini batch
-			tmp_time = time.time()
+			time_point_step_real_start = time.time()
 			_, cur_loss, cur_step = \
 				self.sess.run([self.train_op, self.loss, self.global_step], 
 				feed_dict = {self.X: train_X, self.Y: train_Y})
-			hete_time = time.time() - tmp_time # record the time to calulate one mini-batch only
+			time_dur_real_step = time.time() - time_point_step_real_start # record the time to calulate one mini-batch only
 			
 			# record infomation to log file
 			cur_time = time.time() - self.timer_from_PS
@@ -279,16 +106,16 @@ class STRAIN_WK(object):
 					% (self.No, ep, cur_time, self.base_time_step, cur_loss))
 
 			# record the a time	
-			time_one_step = time.time() - time_step_start # record the time one step needs, excluding the sleep time 			
-			time_span = time.time() - time_after_a_commit # record the time apart from last commit
-			self.log("Time per batch: %f" % (hete_time))
-			self.log("Time one step: %f" % (time_one_step))
-			self.log("Time from last commit: %f" % (time_span))
+			time_dur_step = time.time() - time_point_step_start # record the time one step needs, excluding the sleep time 			
+			time_dur_from_last_step = time.time() - time_point_after_a_commit # record the time apart from last commit
+			self.log("Time per batch: %f" % (time_dur_real_step))
+			self.log("Time one step: %f" % (time_dur_step))
+			self.log("Time from last commit: %f" % (time_dur_from_last_step))
 			#  commit to the PS 
-			if((self.notWait and (time_span >= self.base_time_step)) or ((not self.notWait) and si >= self.base_time_step)):
-				tmp_time = time.time()
-				self.wk_process_commit(cur_time, cur_loss, hete_time, time_one_step, ep, si, time_span)
-				self.commit_overhead_pertime = time.time() - tmp_time
+			if((self.notWait and (time_dur_from_last_step >= self.base_time_step)) or ((not self.notWait) and si >= self.base_time_step)):
+				time_point_commit_start = time.time()
+				self.wk_process_commit(cur_time, cur_loss, time_dur_real_step, time_dur_step, ep, si, time_dur_from_last_step)
+				self.commit_overhead_pertime = time.time() - time_point_commit_start
 				self.commit_overhead += self.commit_overhead_pertime
 				# check whether to check 
 				self.skt.sendall('Check?')
@@ -303,14 +130,14 @@ class STRAIN_WK(object):
 					self.wk_process_check(cur_time, ep)
 				elif('Stop' in msg):
 					break
-				# recalculate time_after_a_commit after one commit, reset the number of local updates
-				time_after_a_commit = time.time()
+				# recalculate time_point_after_a_commit after one commit, reset the number of local updates
+				time_point_after_a_commit = time.time()
 				si = 0
 			# end commit
 		#end while
 		self.log('USP_WK%d stops training - Step:%d\tTime:%f' % (self.No, ep, cur_time))
 
-	def wk_process_commit(self, cur_time, cur_loss, hete_time, time_one_step, cur_step, si, time_span):
+	def wk_process_commit(self, cur_time, cur_loss, time_dur_real_step, time_dur_step, cur_step, si, time_dur_from_last_step):
 		self.commit_cnt += 1
 		self.skt.sendall('Commit')
 		self.skt.recv(self.buffsize)
@@ -334,7 +161,7 @@ class STRAIN_WK(object):
 
 		tmp_time = time.time()
 		## send some trival message
-		l = "%20.15f, %20.15f, %d, %20.15f, %d, %20.15f" % (hete_time, cur_loss, cur_step, time_one_step, si, time_span)
+		l = "%20.15f, %20.15f, %d, %20.15f, %d, %20.15f" % (time_dur_real_step, cur_loss, cur_step, time_dur_step, si, time_dur_from_last_step)
 		self.skt.sendall(l)
 		self.log("The size of (send some trival message): %f M" % (float(sys.getsizeof(l))/(1024.0 * 1024.0)))
 		self.log("Time of sending trival messages: %f" % (time.time() - tmp_time))

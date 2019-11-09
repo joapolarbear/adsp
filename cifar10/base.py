@@ -133,7 +133,8 @@ class Worker(object):
 		_host = 'localhost',
 		_port_base = 14200,
 		_s = None,
-		logger_name = None):
+		logger_name = None,
+		_eval_step = 10):
 
 		self.No = int(_worker_index)
 		self.check_period = float(_check_period)
@@ -144,6 +145,7 @@ class Worker(object):
 		self.base_dir = _base_dir
 		self.host = _host
 		self.port_base = int(_port_base)
+		self.eval_step = _eval_step
 
 		self.logger = logger.getLogger(logger_name)
 
@@ -206,7 +208,7 @@ class Worker(object):
 		):
 		self.func_fetch_data = _func_fetch_data
 		self.sess = _session
-
+		#! About the model
 		self.merged =  _merged
 		self.train_op = _train_op
 		self.loss = _loss
@@ -215,6 +217,9 @@ class Worker(object):
 		self.Y = _feed_Y
 		self.feed_prediction = _feed_prediction # addional input
 		self.top_k_op = _top_k_op
+		#! connect to the ps
+		self.connect2PS()
+
 		
 	def connect2PS(self):
 		# connect to the PS
@@ -268,157 +273,7 @@ class Worker(object):
 		 	"parameter server [%s:%d]" % (self.No, self.host, (self.port_base + self.No)))
 
 	def run(self, simulate = 0):
-		self.connect2PS()
-		ep = 0
-		time_after_a_commit = time.time()
-
-		si = 0 # the number of local updates
-		self.notWait = False
-		# while not self.sess.should_stop():
-		while (ep < self.max_steps):
-			time_step_start = time.time()
-			ep += 1
-			si += 1
-			# if(simulate):
-			time.sleep(simulate)
-			train_X, train_Y, eval_X, eval_Y, test_X, test_Y = self.func_fetch_data(Train = True, Eval = True, Test = True)
-			cur_train_labels_list = train_Y.tolist()
-			# train one mini batch
-			tmp_time = time.time()
-			_, cur_loss, cur_step = \
-				self.sess.run([self.train_op, self.loss, self.global_step], 
-				feed_dict = {self.X: train_X, self.Y: train_Y})
-			hete_time = time.time() - tmp_time # record the time to calulate one mini-batch only
-			
-			# record infomation to log file
-			cur_time = time.time() - self.timer_from_PS
-			self.f_log.write('%020.10f, %-10d, %030.20f\n' % (cur_time, ep, cur_loss))
-			self.f_log.flush()
-
-			# evaluation
-			if(ep % 10 == 0):
-				_, eval_loss = \
-					self.sess.run([self.train_op, self.loss], 
-					feed_dict = {self.X: eval_X, self.Y: eval_Y})
-				cur_time = time.time() - self.timer_from_PS	
-				self.log('USP_WK%d - Step:%d\tTime:%f\tbase_time_step:%ds\tTrain loss: %f\tEval loss: %f'\
-					% (self.No, ep, cur_time, self.base_time_step, cur_loss, eval_loss))
-			else:
-				self.log('USP_WK%d - Step:%d\tTime:%f\tbase_time_step:%ds\tTrain loss: %f'\
-					% (self.No, ep, cur_time, self.base_time_step, cur_loss))
-
-			# record the a time	
-			time_one_step = time.time() - time_step_start # record the time one step needs, excluding the sleep time 			
-			time_span = time.time() - time_after_a_commit # record the time apart from last commit
-			self.log("Time per batch: %f" % (hete_time))
-			self.log("Time one step: %f" % (time_one_step))
-			self.log("Time from last commit: %f" % (time_span))
-			#  commit to the PS 
-			if((self.notWait and (time_span >= self.base_time_step)) or ((not self.notWait) and si >= self.base_time_step)):
-				tmp_time = time.time()
-				self.wk_process_commit(cur_time, cur_loss, hete_time, time_one_step, ep, si, time_span)
-				self.commit_overhead_pertime = time.time() - tmp_time
-				self.commit_overhead += self.commit_overhead_pertime
-				# check whether to check 
-				self.skt.sendall('Check?')
-				msg = self.skt.recv(self.buffsize)
-				if(not self.notWait):
-					self.log("Allow waiting, the number of local updates meets the threshold => commit => check ?: %s" % msg)
-				else:
-					self.log("No waiting, the time meets the threshold => commit => check ?: %s" % msg)
-				
-				# decide check or not
-				if('Check' in msg):
-					self.wk_process_check(cur_time, ep)
-				elif('Stop' in msg):
-					break
-				# recalculate time_after_a_commit after one commit, reset the number of local updates
-				time_after_a_commit = time.time()
-				si = 0
-			# end commit
-		#end while
-		self.log('USP_WK%d stops training - Step:%d\tTime:%f' % (self.No, ep, cur_time))
-
-	def wk_process_commit(self, cur_time, cur_loss, hete_time, time_one_step, cur_step, si, time_span):
-		self.commit_cnt += 1
-		self.skt.sendall('Commit')
-		self.skt.recv(self.buffsize)
-
-		tmp_time = time.time()
-		# Sum and send all local updates
-		index = 0
-		communication_size = 0
-		for v in tf.trainable_variables():
-			cur_parameter = v.eval(session = self.sess)
-			l = (cur_parameter - self.parameter[index]).tobytes()
-			communication_size += sys.getsizeof(l)
-			self.sendmsg(l)
-			self.parameter[index] = cur_parameter[:]
-			index += 1
-		# end for
-		print
-		self.log('*************************************** commit *********************************************************')
-		self.log("The size of transmitted Parameters: %f M" % (float(communication_size)/(1024.0 * 1024.0)))
-		self.log("Time of extracting and sending parameters: %f" % (time.time() - tmp_time))
-
-		tmp_time = time.time()
-		## send some trival message
-		l = "%20.15f, %20.15f, %d, %20.15f, %d, %20.15f" % (hete_time, cur_loss, cur_step, time_one_step, si, time_span)
-		self.skt.sendall(l)
-		self.log("The size of (send some trival message): %f M" % (float(sys.getsizeof(l))/(1024.0 * 1024.0)))
-		self.log("Time of sending trival messages: %f" % (time.time() - tmp_time))
-
-		tmp_time = time.time()
-		##  Receive the overall parameters from the PS
-		communication_size = 0
-		for i in xrange(len(self.parameter)):
-			msg = self.recvmsg()
-			communication_size += sys.getsizeof(msg)
-			self.parameter[i] = np.copy(np.frombuffer(msg, dtype=np.float32)).reshape(self.para_shape[i])
-		self.log("The size of transmitted Parameters: %d M" % (float(communication_size)/(1024.0 * 1024.0)))
-		self.log("Time of recv parameters: %f" % (time.time() - tmp_time))
-
-		# receive trival message
-		self.skt.recv(self.buffsize)
-		
-		tmp_time = time.time()
-		# Update the local mode
-		index = 0
-		for v in tf.trainable_variables():
-			tt = time.time()
-			v.load(self.parameter[index], self.sess)
-			# self.sess.run(assign_op)
-			self.log("		-- time: %f\tsize: %f" %(time.time() - tt, sys.getsizeof(self.parameter[index])))
-			index += 1
-		self.log("Time of load parameters: %f" % (time.time() - tmp_time))
-		self.log("USP_WK%d: Commit %d finished" % (self.No, self.commit_cnt))
-		self.log('******************************************************************************************************')
-		print
-
-	def wk_process_check(self, cur_time, cur_step):
-		# change the role from sender to receiver
-		## send some trival message
-		l = "%20.15f, " % (self.commit_overhead)
-		self.skt.sendall(l)
-
-		# receive target commit No 
-		expect_cNo = float(self.skt.recv(self.buffsize))
-		print
-		self.log('########################## check #################################')
-		self.log("New delta c target: %f" % (expect_cNo))
-		
-		# update the base_time_step
-		if(expect_cNo < 0):
-			# based on the time, no waiting
-			# huhanpeng: estimate the communication time ???
-			self.base_time_step = max(MIN_TIME_TO_COMMIT, self.check_period / float(- expect_cNo) - self.commit_overhead_pertime)
-			self.notWait = True
-		else:
-			self.base_time_step = expect_cNo
-			self.notWait = False	
-		self.log('#################################################################')
-		print
-
+		raise NotImplementedError()
 
 def average(seq): 
 	return float(sum(seq)) / len(seq)

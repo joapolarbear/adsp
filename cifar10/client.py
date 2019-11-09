@@ -1,5 +1,4 @@
 import tensorflow as tf
-# import strain as st
 import strain as st
 import cifar10
 import numpy as np
