@@ -1,6 +1,6 @@
 import tensorflow as tf
 import strain as st
-import cifar10
+from model import cifar10
 import numpy as np
 
 flags = tf.app.flags
