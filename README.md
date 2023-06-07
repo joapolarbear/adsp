@@ -1,5 +1,9 @@
 # STrain
 
+STrain uses a novel parameter synchronization model, namely ADSP (ADaptive Synchronous Parallel), for distributed machine learning (ML) with heterogeneous devices. It eliminates the significant waiting time occurring with previous parameter synchronization models. The core idea of ADSP is to let faster edge devices continue training, while committing their model updates at strategically decided intervals. We design algorithms that decide time points for each worker to commit its model update, and ensure not only global model convergence but also faster convergence.
+ 
+## Usage
+
 Currently, it needs users to manually lauch the parameter server first and then all workers.
 
 First, to lanch the parameter server, you can run the following cammands on the server where you want to run parameter server.
@@ -39,5 +43,17 @@ python2.7 -u client.py \
 			--check_period=$check_period \
 			--class_num=10
 ```
-
+## Research Paper
+STrain has been accepted by AAAI'20 ([Link to the paper](https://i.cs.hku.hk/~cwu/papers/hphu-aaai20.pdf)). If you use STrain in your research, please consider citing our paper:
+```
+@inproceedings{hu2020distributed,
+  title={Distributed machine learning through heterogeneous edge systems},
+  author={Hu, Hanpeng and Wang, Dan and Wu, Chuan},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume={34},
+  number={05},
+  pages={7179--7186},
+  year={2020}
+}
+```
 
