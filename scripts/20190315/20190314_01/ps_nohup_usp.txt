@@ -1,0 +1,269 @@
+nohup: ignoring input
+None
+WARNING:tensorflow:From /home/ubuntu/anaconda3/envs/tensorflow_p27/lib/python2.7/site-packages/tensorflow/python/training/input.py:187: __init__ (from tensorflow.python.training.queue_runner_impl) is deprecated and will be removed in a future version.
+Instructions for updating:
+To construct input pipelines, use the `tf.data` module.
+WARNING:tensorflow:From /home/ubuntu/anaconda3/envs/tensorflow_p27/lib/python2.7/site-packages/tensorflow/python/training/input.py:187: add_queue_runner (from tensorflow.python.training.queue_runner_impl) is deprecated and will be removed in a future version.
+Instructions for updating:
+To construct input pipelines, use the `tf.data` module.
+Filling queue with 16000 CIFAR images before starting to train. This will take a few minutes.
+2019-03-14 01:07:21.648660: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX512F
+2019-03-14 01:07:21.650722: I tensorflow/core/common_runtime/process_util.cc:69] Creating new thread pool with default inter op setting: 2. Tune using inter_op_parallelism_threads for best performance.
+WARNING:tensorflow:From client.py:116: start_queue_runners (from tensorflow.python.training.queue_runner_impl) is deprecated and will be removed in a future version.
+Instructions for updating:
+To construct input pipelines, use the `tf.data` module.
+Wait for 0th connection ... 
+Wait for 1th connection ... 
+Wait for 2th connection ... 
+Wait for 3th connection ... 
+Wait for 4th connection ... 
+Wait for 5th connection ... 
+Wait for 6th connection ... 
+Wait for 7th connection ... 
+Wait for 8th connection ... 
+Wait for 9th connection ... 
+Wait for 10th connection ... 
+Wait for 11th connection ... 
+Wait for 12th connection ... 
+Wait for 13th connection ... 
+Wait for 14th connection ... 
+Wait for 15th connection ... 
+Wait for 16th connection ... 
+Wait for 17th connection ... 
+connection from :('13.59.90.49', 37342)
+listener start to work 0
+
+Epoch 1:
+The size of model: 1.173317MB
+connection from :('18.216.183.104', 47450)
+listener start to work 1
+The size of model: 1.173317MB
+connection from :('3.18.105.134', 59530)
+listener start to work 2
+The size of model: 1.173317MB
+connection from :('18.188.144.157', 53294)
+listener start to work 3
+The size of model: 1.173317MB
+connection from :('3.18.105.173', 33408)
+listener start to work 4
+The size of model: 1.173317MB
+connection from :('52.14.30.14', 59744)
+listener start to work 5
+The size of model: 1.173317MB
+connection from :('18.191.183.38', 39938)
+listener start to work 6
+The size of model: 1.173317MB
+connection from :('52.15.43.20', 60078)
+listener start to work 8
+connection from :('18.223.32.218', 34394)
+listener start to work 7
+The size of model: 1.173317MB
+The size of model: 1.173317MB
+connection from :('18.224.180.220', 56208)
+listener start to work 9
+The size of model: 1.173317MB
+connection from :('18.188.143.85', 36402)
+listener start to work 11
+connection from :('18.223.44.163', 51374)
+listener start to work 10
+The size of model: 1.173317MB
+The size of model: 1.173317MB
+connection from :('13.58.24.59', 36350)
+listener start to work 13
+The size of model: 1.173317MB
+connection from :('3.18.108.156', 39698)
+listener start to work 12
+The size of model: 1.173317MB
+connection from :('3.17.207.123', 53540)
+listener start to work 16
+connection from :('18.191.216.48', 35450)
+listener start to work 14
+The size of model: 1.173317MB
+The size of model: 1.173317MB
+connection from :('18.223.114.201', 60462)
+listener start to work 17
+connection from :('18.218.165.214', 37428)
+listener start to work 15
+The size of model: 1.173317MB
+The size of model: 1.173317MB
+Start Search:
+Time:       137.1194088459 	Global loss: 2.222221	Total accuracy: 0.4015624999999999889
+Time:       204.2396659851 	Global loss: 2.187929	Total accuracy: 0.3820312499999999889
+mu: 0.000000	eta: 0.055556
+Time:       330.0873558521 	Global loss: 1.779367	Total accuracy: 0.5031250000000000444
+/home/ubuntu/anaconda3/envs/tensorflow_p27/lib/python2.7/site-packages/scipy/optimize/minpack.py:794: OptimizeWarning: Covariance of the parameters could not be estimated
+  category=OptimizeWarning)
+reward: 0.001507 (last_loss: [2.222221302986145, 2.187928795814514, 1.7793665289878846]	 time: [143.1054699420929, 205.87462496757507, 334.4614968299866]
+
+current opt mu: 0.000000 	 eta: 0.055556	reward: 0.001507
+Time:       401.2818098068 	Global loss: 1.704449	Total accuracy: 0.5421875000000000444
+mu: 0.300000	eta: 0.055556
+Time:       527.6433618069 	Global loss: 1.479878	Total accuracy: 0.6054687500000000000
+reward: 0.001520 (last_loss: [1.7793665289878846, 1.7044487714767456, 1.4798782587051391]	 time: [334.4614968299866, 402.84357500076294, 532.260360956192]
+
+current opt mu: 0.300000 	 eta: 0.055556	reward: 0.001520
+Time:       600.4318487644 	Global loss: 1.505459	Total accuracy: 0.6085937500000000444
+mu: 0.600000	eta: 0.055556
+Time:       674.5353519917 	Global loss: 1.434778	Total accuracy: 0.6203125000000000444
+reward: 0.001660 (last_loss: [1.4798782587051391, 1.505458950996399, 1.4347777128219605]	 time: [532.260360956192, 602.5719909667969, 678.944876909256]
+
+current opt mu: 0.600000 	 eta: 0.055556	reward: 0.001660
+Time: 719.212011	Accu Search Time: 706.415030
+Opt mu: 0.600000	 Opt eta: 0.055556
+USP:expect_commit [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+
+check_period: 1
+Time:       838.5485618114 	Global loss: 1.369294	Total accuracy: 0.6273437499999999778
+check_period: 2
+Time:       959.6324508190 	Global loss: 1.717668	Total accuracy: 0.4984374999999999778
+check_period: 3
+Time:      1080.6514658928 	Global loss: 3.055885	Total accuracy: 0.3781249999999999889
+
+Epoch 2:
+Start Search:
+Time:      1115.0953698158 	Global loss: 4.199810	Total accuracy: 0.2796874999999999778
+Time:      1180.7896888256 	Global loss: 3.920024	Total accuracy: 0.3101562500000000222
+mu: 0.000000	eta: 0.055556
+Time:      1306.9153587818 	Global loss: 1.554119	Total accuracy: 0.5773437500000000444
+reward: 0.137386 (last_loss: [4.199810266494751, 3.920023560523987, 1.5541187882423402]	 time: [1119.7089278697968, 1183.1676337718964, 1311.1488728523254]
+
+current opt mu: 0.000000 	 eta: 0.055556	reward: 0.137386
+Time:      1372.2550449371 	Global loss: 1.448439	Total accuracy: 0.6250000000000000000
+mu: 0.300000	eta: 0.055556
+Time:      1497.2874178886 	Global loss: 1.165963	Total accuracy: 0.6937499999999999778
+reward: 0.066251 (last_loss: [1.5541187882423402, 1.4484385251998901, 1.1659631729125977]	 time: [1311.1488728523254, 1374.1715939044952, 1501.816862821579]
+
+current opt mu: 0.000000 	 eta: 0.055556	reward: 0.137386
+Time:      1562.9140529633 	Global loss: 1.210472	Total accuracy: 0.6570312499999999556
+mu: 0.600000	eta: 0.055556
+Time:      1689.3513388634 	Global loss: 1.347747	Total accuracy: 0.6273437499999999778
+reward: 4.810387 (last_loss: [1.1659631729125977, 1.2104716897010803, 1.3477468132972716]	 time: [1501.816862821579, 1565.6971309185028, 1693.8127608299255]
+
+current opt mu: 0.600000 	 eta: 0.055556	reward: 4.810387
+Time: 1693.813445	Accu Search Time: 1317.833114
+Opt mu: 0.600000	 Opt eta: 0.055556
+USP:expect_commit [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+
+check_period: 4
+Time:      1813.0941739082 	Global loss: 1.841905	Total accuracy: 0.5960937499999999778
+
+Epoch 3:
+Start Search:
+Time:      1831.5113539696 	Global loss: 1.726880	Total accuracy: 0.5359374999999999556
+Time:      1897.4949169159 	Global loss: 1.571610	Total accuracy: 0.5609374999999999778
+mu: 0.000000	eta: 0.055556
+Time:      1976.2193949223 	Global loss: 0.988030	Total accuracy: 0.7289062499999999778
+reward: 0.435122 (last_loss: [1.726879620552063, 1.5716102600097657, 0.9880295157432556]	 time: [1836.4252858161926, 1899.5197417736053, 1980.849426984787]
+
+current opt mu: 0.000000 	 eta: 0.055556	reward: 0.435122
+Time:      2041.9473679066 	Global loss: 0.962770	Total accuracy: 0.7507812499999999556
+mu: 0.300000	eta: 0.055556
+Time:      2167.6233577728 	Global loss: 0.902847	Total accuracy: 0.7718749999999999778
+reward: 0.000513 (last_loss: [0.9880295157432556, 0.9627700924873352, 0.9028465449810028]	 time: [1980.849426984787, 2044.4476249217987, 2171.953788995743]
+
+current opt mu: 0.000000 	 eta: 0.055556	reward: 0.435122
+Time:      2233.9255888462 	Global loss: 0.891636	Total accuracy: 0.7609375000000000444
+mu: 0.600000	eta: 0.055556
+Time:      2359.8673498631 	Global loss: 1.050407	Total accuracy: 0.7093749999999999778
+reward: -0.228641 (last_loss: [0.9028465449810028, 0.89163578748703, 1.0504068970680236]	 time: [2171.953788995743, 2235.9545397758484, 2364.4447848796844]
+
+current opt mu: 0.000000 	 eta: 0.055556	reward: 0.435122
+Time:      2425.5353918076 	Global loss: 1.073937	Total accuracy: 0.7164062500000000222
+mu: 0.100000	eta: 0.055556
+Time:      2551.7873618603 	Global loss: 0.917453	Total accuracy: 0.7695312500000000000
+reward: 0.000391 (last_loss: [1.0504068970680236, 1.07393718957901, 0.9174532651901245]	 time: [2364.4447848796844, 2427.7562057971954, 2556.301647901535]
+
+current opt mu: 0.000000 	 eta: 0.055556	reward: 0.435122
+Time:      2693.2973477840 	Global loss: 0.908148	Total accuracy: 0.7624999999999999556
+mu: 0.200000	eta: 0.055556
+Time:      2768.8113517761 	Global loss: 0.914804	Total accuracy: 0.7515625000000000222
+reward: -1.065170 (last_loss: [0.9174532651901245, 0.9081481158733368, 0.9148039221763611]	 time: [2556.301647901535, 2695.415689945221, 2773.4419119358063]
+
+current opt mu: 0.000000 	 eta: 0.055556	reward: 0.435122
+c_target add 1: 3
+Start Search:
+Time:      2773.5793728828 	Global loss: 0.854185	Total accuracy: 0.7992187499999999778
+Time:      2839.2281627655 	Global loss: 0.870319	Total accuracy: 0.7765625000000000444
+mu: 0.000000	eta: 0.055556
+Time:      2922.1091849804 	Global loss: 0.862470	Total accuracy: 0.7750000000000000222
+reward: -1.494826 (last_loss: [0.8541847705841065, 0.8703194260597229, 0.8624699473381042]	 time: [2778.080880880356, 2839.918315887451, 2926.3211488723755]
+
+current opt mu: 0.000000 	 eta: 0.055556	reward: -1.494826
+Time:      2987.6492447853 	Global loss: 0.901643	Total accuracy: 0.7710937500000000222
+mu: 0.300000	eta: 0.055556
+Time:      3067.3513598442 	Global loss: 0.969430	Total accuracy: 0.7429687499999999556
+reward: -0.445856 (last_loss: [0.8624699473381042, 0.9016426086425782, 0.9694300770759583]	 time: [2926.3211488723755, 2988.373111963272, 3071.64039683342]
+
+current opt mu: 0.300000 	 eta: 0.055556	reward: -0.445856
+Time:      3132.8119258881 	Global loss: 0.914087	Total accuracy: 0.7703124999999999556
+mu: 0.600000	eta: 0.055556
+Time:      3217.7074007988 	Global loss: 0.988972	Total accuracy: 0.7296875000000000444
+reward: -0.062398 (last_loss: [0.9694300770759583, 0.9140867769718171, 0.9889716625213623]	 time: [3071.64039683342, 3133.507483959198, 3222.256411790848]
+
+current opt mu: 0.600000 	 eta: 0.055556	reward: -0.062398
+Time: 3222.257239	Accu Search Time: 2725.050098
+Opt mu: 0.600000	 Opt eta: 0.055556
+USP:expect_commit [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+
+check_period: 5
+Time:      3341.5390019417 	Global loss: 1.218479	Total accuracy: 0.6570312499999999556
+check_period: 6
+Time:      3462.8453629017 	Global loss: 3.233326	Total accuracy: 0.3632812500000000000
+
+Epoch 4:
+Start Search:
+Time:      3495.2913339138 	Global loss: 2.600694	Total accuracy: 0.2695312500000000000
+Time:      3560.9019148350 	Global loss: 2.108290	Total accuracy: 0.4234375000000000222
+mu: 0.000000	eta: 0.055556
+Time:      3645.6553609371 	Global loss: 1.140669	Total accuracy: 0.7023437500000000444
+reward: 0.083743 (last_loss: [2.6006938457489013, 2.108290457725525, 1.1406694889068603]	 time: [3499.576712846756, 3561.6309378147125, 3649.848743915558]
+
+current opt mu: 0.000000 	 eta: 0.055556	reward: 0.083743
+Time:      3710.9863817692 	Global loss: 1.122676	Total accuracy: 0.7179687500000000444
+mu: 0.300000	eta: 0.055556
+Time:      3796.5393509865 	Global loss: 0.955364	Total accuracy: 0.7656250000000000000
+reward: 0.000274 (last_loss: [1.1406694889068603, 1.1226760029792786, 0.9553641259670258]	 time: [3649.848743915558, 3711.642217874527, 3800.773458957672]
+
+current opt mu: 0.000000 	 eta: 0.055556	reward: 0.083743
+Time:      3862.0809068680 	Global loss: 1.057417	Total accuracy: 0.7054687499999999778
+mu: 0.600000	eta: 0.055556
+Time:      3939.1553528309 	Global loss: 1.156755	Total accuracy: 0.6937499999999999778
+reward: -1.762073 (last_loss: [0.9553641259670258, 1.057417368888855, 1.1567548632621765]	 time: [3800.773458957672, 3862.798833847046, 3943.4134199619293]
+
+current opt mu: 0.000000 	 eta: 0.055556	reward: 0.083743
+Time:      4004.4912698269 	Global loss: 0.956573	Total accuracy: 0.7640624999999999778
+mu: 0.100000	eta: 0.055556
+Time:      4090.2073547840 	Global loss: 0.915812	Total accuracy: 0.7640624999999999778
+reward: -0.000422 (last_loss: [1.1567548632621765, 0.9565728425979614, 0.9158115386962891]	 time: [3943.4134199619293, 4005.1651289463043, 4094.3615078926086]
+
+current opt mu: 0.000000 	 eta: 0.055556	reward: 0.083743
+Time:      4155.4940497875 	Global loss: 0.893001	Total accuracy: 0.7632812500000000222
+mu: 0.200000	eta: 0.055556
+Time:      4236.5633718967 	Global loss: 0.951394	Total accuracy: 0.7570312500000000444
+reward: 0.469437 (last_loss: [0.9158115386962891, 0.8930006861686707, 0.9513942956924438]	 time: [4094.3615078926086, 4156.232804775238, 4241.485502958298]
+
+current opt mu: 0.200000 	 eta: 0.055556	reward: 0.469437
+Time: 4241.486359	Accu Search Time: 3501.880551
+Opt mu: 0.200000	 Opt eta: 0.055556
+USP:expect_commit [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+
+check_period: 7
+Time:      4360.9158627987 	Global loss: 0.946547	Total accuracy: 0.7492187500000000444
+Wait for 4th connection ... 
+Wait for 1th connection ... 
+Wait for 0th connection ... 
+Wait for 5th connection ... 
+Wait for 6th connection ... 
+Wait for 16th connection ... 
+Wait for 3th connection ... 
+Wait for 8th connection ... 
+Wait for 9th connection ... 
+Wait for 13th connection ... 
+Wait for 17th connection ... 
+Wait for 11th connection ... 
+Wait for 2th connection ... 
+Wait for 10th connection ... 
+Wait for 7th connection ... 
+Wait for 14th connection ... 
+Wait for 15th connection ... 
+Wait for 12th connection ... 

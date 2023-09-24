@@ -1,1 +1,6 @@
 cifar10/.DS_Store
+
+*.pdf
+*.png
+*.pyc
+*.DS_Store
