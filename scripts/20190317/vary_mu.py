@@ -1,10 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
+from utils import ret_list
 
-def ret_list(filename):
-	lines = [[float(x) for x in line.rstrip('\n').split(',')] for line in open(filename)]
-	return np.array(lines)
 def ret_conv_time(a, end, index=0):
 	cnt = 0
 	point = None
@@ -20,7 +19,7 @@ def ret_conv_time(a, end, index=0):
 	else:
 		return 10000
 
-dir_name = "/Users/hhp/Desktop/STrainData&Record/resultData/Lab_record"
+dir_name = os.getenv("DATA_DIR")
 # mu0 = ret_list('/Users/hhp/Desktop/Lab_record/20190313_06/ps_global_loss_usp.txt')
 mu0 = ret_list(dir_name + '/20190317_03/ps_global_loss_usp.txt')
 mu0_025 = ret_list(dir_name + '/20190317_05/ps_global_loss_usp.txt')

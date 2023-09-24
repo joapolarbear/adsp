@@ -3,9 +3,8 @@ import numpy as np
 import copy
 import os
 
-def ret_list(filename):
-	lines = [[float(x) for x in line.rstrip('\n').split(',')] for line in open(filename)]
-	return np.array(lines)
+from utils import ret_list
+
 def ret_conv_time(a, end, index=0):
 	cnt = 0
 	point = None
@@ -22,9 +21,7 @@ def ret_conv_time(a, end, index=0):
 		return 0
 
 
-data_dir = "/Users/hhp/Desktop/STrainData&Record/resultData/Lab_record"
-
-
+data_dir = os.getenv("DATA_DIR")
 
 
 plt.figure(num=4, figsize=(8, 4))

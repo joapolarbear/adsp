@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import copy
+import os
 
-def ret_list(filename):
-	lines = [[float(x) for x in line.rstrip('\n').split(',')] for line in open(filename)]
-	return np.array(lines)
+from utils import ret_list
+
 def ret_conv_time(a, end, index=0):
 	cnt = 0
 	point = None
@@ -20,7 +20,7 @@ def ret_conv_time(a, end, index=0):
 	else:
 		return -1
 
-data_dir = "/Users/hhp/Desktop/STrainData&Record/resultData/Lab_record"
+data_dir = os.getenv("DATA_DIR")
 # data_dir = 'C:/Users/Admin/Dropbox/Lab_record/new/Lab_record/'
 strain = ret_list(data_dir + '/20190122_01/ps_global_loss_usp2.txt')
 # cifar_strain = ret_list('/Users/hhp/Desktop/amazon/20190314_01/ps_global_loss_usp.txt')

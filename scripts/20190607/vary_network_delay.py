@@ -3,29 +3,14 @@
 '''
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
-def ret_list(filename):
-	lines = [[float(x) for x in line.rstrip('\n').split(',')] for line in open(filename)]
-	return np.array(lines)
+from utils import ret_list
 
-def ret_accuracy(filename):
-	lines = [line.rstrip('\n') for line in open(filename)]
-	accuracy = lines[-1].split(',')[-1].split(']')[0]
-	return float(accuracy)
-
-def ret_some_time(filename):
-	lines = [line.rstrip('\n') for line in open(filename)]
-	time = lines[-1].split(':')[-1].split('[')[-1].split(']')[0].split(',')
-	return sum([float(_x) for _x in time])/3.0
-
-def normalize(l1, l2, l3, time):
-	''' normalize the computation time, commit overhead and blocked time with the total time '''
-	a = np.array([l1, l2, l3])
-	return a / time
 
 name_list = ['ADSP', 'SSP s=40', 'BSP', 'ADACOMM', '\nFixed ADACOMM\n tau=40']
 # data_dir = 'C:/Users/Admin/Dropbox/Lab_record/new/Lab_record/'
-data_dir = "/Users/hhp/Desktop/STrainData&Record/resultData/Lab_record"
+data_dir = os.getenv("DATA_DIR")
 
 # Loss: before adding the sleeping time for the communication function
 usp = ret_list(data_dir + '/20190430_03/ps_global_loss_usp.txt')

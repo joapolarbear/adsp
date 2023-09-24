@@ -1,10 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+from utils import ret_list
 
-def ret_list(filename):
-	lines = [[float(x) for x in line.rstrip('\n').split(',')] for line in open(filename)]
-	return np.array(lines)
 def ret_conv_time(a, end, index=0):
 	cnt = 0
 	for i in range(len(a)):

@@ -47,7 +47,7 @@ def get_block_time(file):
 			total_blocked_time += t
 	return total_blocked_time
 
-dir_name = "/Users/hhp/Desktop/STrainData&Record/resultData/Lab_record"
+dir_name = os.getenv("DATA_DIR")
 t = get_block_time(dir_name + '/20190312_07/ps_global_loss_ssp.txt')
 t = 13446.33
 bsp.append(t)

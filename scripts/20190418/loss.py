@@ -3,18 +3,11 @@
 '''
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
+from utils import ret_list, ret_accuracy
 
-def ret_list(filename):
-	lines = [[float(x) for x in line.rstrip('\n').split(',')] for line in open(filename)]
-	return np.array(lines)
-
-def ret_accuracy(filename):
-	lines = [line.rstrip('\n') for line in open(filename)]
-	accuracy = lines[-1].split(',')[-1].split(']')[0]
-	return float(accuracy)
-
-dir_name = "/Users/hhp/Desktop/STrainData&Record/resultData/Lab_record"
+dir_name = os.getenv("DATA_DIR")
 
 # usp = ret_list(dir_name + '/20190417_01/ps_global_loss_usp.txt')
 usp = ret_list(dir_name + '/20190430_03/ps_global_loss_usp.txt')
