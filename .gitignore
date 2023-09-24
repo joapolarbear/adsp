@@ -4,3 +4,5 @@ cifar10/.DS_Store
 *.png
 *.pyc
 *.DS_Store
+
+fig/*
