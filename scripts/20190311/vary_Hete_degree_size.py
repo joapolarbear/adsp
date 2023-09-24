@@ -148,6 +148,6 @@ plt.legend(loc=2, ncol=1, fontsize=9)
 plt.subplots_adjust(top=0.92, bottom=0.15, left=0.10, right=0.95, hspace=0.5,
                     wspace=0.25)
 import os
-plt.savefig(os.path.basename(__file__).split(".py")[0] + ".pdf")
+plt.savefig(os.path.join("fig", os.path.basename(__file__).split(".py")[0] + ".pdf"))
 
 

@@ -107,6 +107,6 @@ plt.xlabel('(b)')
 
 plt.subplots_adjust(top=0.78, bottom=0.18, left=0.08, right=0.95, hspace=0.45,
                     wspace=0.35)
-plt.savefig("compared2R2SP.pdf")()
+plt.savefig("fig/compared2R2SP.pdf")()
 
 

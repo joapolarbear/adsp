@@ -98,6 +98,6 @@ plt.yticks(rotation=60)
 
 plt.subplots_adjust(top=0.92, bottom=0.25, left=0.10, right=0.95, hspace=0.2,
                     wspace=0.3)
-plt.savefig("chiller_rst.pdf")
+plt.savefig("fig/chiller_rst.pdf")
 
 

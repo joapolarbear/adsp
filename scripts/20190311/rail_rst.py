@@ -101,6 +101,6 @@ plt.ylabel('Global Loss')
 
 plt.subplots_adjust(top=0.92, bottom=0.15, left=0.10, right=0.95, hspace=0.3,
                     wspace=0.25)
-plt.savefig("rail_rst.pdf")
+plt.savefig("fig/rail_rst.pdf")
 
 

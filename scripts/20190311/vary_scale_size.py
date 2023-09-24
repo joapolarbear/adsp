@@ -90,6 +90,6 @@ plt.legend(loc=2, ncol=2)
 
 plt.subplots_adjust(top=0.92, bottom=0.2, left=0.10, right=0.95, hspace=0.2,
                     wspace=0.25)
-plt.savefig("vary_scale_size.pdf")
+plt.savefig("fig/vary_scale_size.pdf")
 
 

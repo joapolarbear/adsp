@@ -137,6 +137,6 @@ plt.ylim(0, 3)
 
 plt.subplots_adjust(top=0.9, bottom=0.3, left=0.10, right=0.95, hspace=0.25,
                     wspace=0.4)
-plt.savefig("vary_commit_rate_mu.pdf")
+plt.savefig("fig/vary_commit_rate_mu.pdf")
 
 

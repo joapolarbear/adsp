@@ -122,6 +122,6 @@ plt.xticks(rotation=30)
 
 plt.subplots_adjust(top=0.92, bottom=0.3, left=0.10, right=0.95, hspace=0.25,
                     wspace=0.23)
-plt.savefig("vary_mu.pdf")
+plt.savefig("fig/vary_mu.pdf")
 
 

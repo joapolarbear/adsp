@@ -58,9 +58,6 @@ fixed_ada = ret_list(data_dir + '/20190519_01/ps_global_loss_ada.txt') #  201905
 allList_5 = [usp, ssp, bsp, ada, fixed_ada]
 lossList = [allList_0, allList_1, allList_2_5, allList_5]
 
-
-
-
 # subtitle = ['No sleep', 'Sleep 2s', 'Sleep 5s', 'Sleep 10s']
 # plt.figure(num=4, figsize=(8, 8))
 # for i in range(4):
@@ -88,6 +85,6 @@ for i in range(4):
 # plt.title('Time Distribution with STrain')
 plt.subplots_adjust(top=0.8, bottom=0.1, left=0.1, right=0.95, hspace=0.4,
                     wspace=0.3)
-plt.savefig("vary_network_delay.pdf")
+plt.savefig("fig/vary_network_delay.pdf")
 
 

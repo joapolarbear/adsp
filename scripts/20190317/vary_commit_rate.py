@@ -90,6 +90,6 @@ plt.ylabel('Convergence Time (s)', fontsize=12)
 
 plt.subplots_adjust(top=0.92, bottom=0.25, left=0.15, right=0.95, hspace=0.25,
                     wspace=0.23)
-plt.savefig("vary_commit_rate.pdf")
+plt.savefig("fig/vary_commit_rate.pdf")
 
 

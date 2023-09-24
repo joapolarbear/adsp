@@ -424,5 +424,5 @@ ax3.set_title("(c)")
 
 plt.subplots_adjust(top=0.92, bottom=0.1, left=0.10, right=0.95, hspace=0.25, wspace=0.2)
 plt.xlabel("Heterogeneity(Vavg/Vmin)", fontsize = font_size)
-plt.savefig("/Users/hhp/Dropbox/Hu Hanpeng/paper draft/fig/strain_beta_ssp40_contrast.jpg")
+plt.savefig("fig/strain_beta_ssp40_contrast.jpg")
 

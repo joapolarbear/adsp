@@ -63,7 +63,7 @@ plt.ylabel("Time to Train 600 Steps", fontsize = font_size)
 plt.subplots_adjust(top=0.90, bottom=0.14, left=0.17, right=0.9, hspace=0.25,
                     wspace=0.2)
 # plt.grid(True)
-plt.savefig("waiting_ratio.png")
+plt.savefig("fig/waiting_ratio.png")
 # plt.savefig("/Users/hhp/Dropbox/ssh/20190307/waiting_ratio.png")
 
 

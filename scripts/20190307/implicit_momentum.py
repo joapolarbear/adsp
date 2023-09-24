@@ -39,4 +39,4 @@ plt.fill_between(x, xx, opt[:5], color='orange', alpha=0.25, label='explicit mom
 plt.legend(loc=4, fontsize=18)
 plt.tick_params(axis='both', which='major', labelsize=15)
 plt.subplots_adjust(top=0.92, bottom=0.17, left=0.17, right=0.92, hspace=0.25, wspace=0.2)
-plt.savefig("implicit_momentum.png")
+plt.savefig("fig/implicit_momentum.png")

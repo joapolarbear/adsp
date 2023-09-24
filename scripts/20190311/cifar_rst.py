@@ -130,6 +130,6 @@ plt.ylabel('Global Loss')
 
 plt.subplots_adjust(top=0.92, bottom=0.1, left=0.10, right=0.95, hspace=0.28,
                     wspace=0.2)
-plt.savefig("cifar_rst.pdf")
+plt.savefig("fig/cifar_rst.pdf")
 
 

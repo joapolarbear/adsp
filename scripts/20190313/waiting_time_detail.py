@@ -221,6 +221,4 @@ plt.ylabel("Convergence Time / # of steps")
 plt.subplots_adjust(top=0.95, bottom=0.1, left=0.1, right=0.9, hspace=0.4,
                     wspace=0.2)
 # plt.grid(True)
-plt.savefig("waiting_time.pdf")
-# plt.savefig("/Users/hhp/Dropbox/ssh/20190307/waiting_ratio.png")
-
+plt.savefig("fig/waiting_time.pdf")

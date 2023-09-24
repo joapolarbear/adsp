@@ -79,6 +79,6 @@ plt.xlim(0, 25000)
 
 plt.subplots_adjust(top=0.92, bottom=0.2, left=0.10, right=0.95, hspace=0.2,
                     wspace=0.25)
-plt.savefig("offline_search_commit_rate.pdf")
+plt.savefig("fig/offline_search_commit_rate.pdf")
 
 

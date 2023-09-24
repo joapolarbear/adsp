@@ -53,6 +53,6 @@ plt.subplots_adjust(top=0.9, bottom=0.2, left=0.1, right=0.95, hspace=0.5,
                     wspace=0.3)
 
 import os
-plt.savefig(os.path.basename(__file__).split(".py")[0] + ".pdf")
+plt.savefig(os.path.join("fig", os.path.basename(__file__).split(".py")[0] + ".pdf"))
 
 

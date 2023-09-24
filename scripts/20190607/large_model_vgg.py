@@ -59,6 +59,6 @@ plt.legend()
 # plt.title('Time Distribution with STrain')
 plt.subplots_adjust(top=0.93, bottom=0.16, left=0.1, right=0.95, hspace=0.4,
                     wspace=0.3)
-plt.savefig("large_model_vgg.pdf")
+plt.savefig("fig/large_model_vgg.pdf")
 
 

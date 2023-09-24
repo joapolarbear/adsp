@@ -114,6 +114,6 @@ print (speedUp)
 
 plt.subplots_adjust(top=0.92, bottom=0.15, left=0.10, right=0.95, hspace=0.5,
                     wspace=0.25)
-plt.savefig("vary_Hete_degree.pdf")
+plt.savefig("fig/vary_Hete_degree.pdf")
 
 

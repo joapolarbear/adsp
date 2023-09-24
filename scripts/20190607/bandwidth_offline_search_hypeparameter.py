@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import copy
+import os
 
 def ret_list(filename):
 	lines = [[float(x) for x in line.rstrip('\n').split(',')] for line in open(filename)]
@@ -79,6 +80,6 @@ plt.xlabel('Time (s)\n(b)')
 
 plt.subplots_adjust(top=0.72, bottom=0.18, left=0.1, right=0.95, hspace=0.45,
                     wspace=0.35)
-plt.savefig("bandwidth_offline_search_hypeparameter.pdf")
+plt.savefig(os.path.join("fig", "bandwidth_offline_search_hypeparameter.pdf"))
 
 
