@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import copy
 import os
-
-from utils import ret_list
+ 
+from utils import *
 
 def ret_conv_time(a, end, index=0):
 	cnt = 0
@@ -32,8 +32,8 @@ strain_3 = ret_list(data_dir + '/20190327_01/ps_global_loss_usp.txt')
 r2sp = ret_list(data_dir + '/20190325_01/ps_global_loss_usp.txt')
 r2sp_1 = ret_list(data_dir + '/20190401_02/ps_global_loss_usp.txt')
 
-allList = [bsp, ssp_40, ada, alter_40, strain_3, r2sp, r2sp_1]
-name_list = ['BSP', 'SSP s=40', 'ADACOMM', 'Fixed ADACOMM', 'ADSP', 'BatchTune BSP', 'BatchTune Fixed\nADACOMM']
+allList = [strain_3, bsp, ssp_40, ada, alter_40, r2sp, r2sp_1]
+name_list = ['ADSP', 'BSP', 'SSP s=40', 'ADACOMM', 'Fixed ADACOMM', 'BatchTune BSP', 'BatchTune Fixed\nADACOMM']
 end = 1.1
 stop_point = [ret_conv_time(l, end) for l in allList]
 stop_step = [ret_conv_time(l, end, 2) for l in allList]
@@ -51,21 +51,34 @@ plt.figure(num=4, figsize=(8, 4))
 # # plt.ylim(0, 3)
 # plt.xlim(0, 25000)
 ax = plt.subplot(121)
+
+window = 15
+k = 3
 for i in range(len(allList)):
-	ax.plot(allList[i][:, 0], allList[i][:, 3], 
-		# marker='.', 
-		# markeredgecolor='red',
-		# markeredgewidth=2, 
-		label=name_list[i])
+    x = allList[i][:, 0]
+    y = allList[i][:, 3]
+
+    y = savgol_filter(y, window, k)
+
+    ax.plot(x, y,
+        # marker='.', 
+        # markeredgecolor='red',
+        # markeredgewidth=2, 
+        # marker=marks[i],
+        # markersize=3,
+        linestyle=linestyle_str[i][1],
+        linewidth=linewidth,
+        label=name_list[i],
+        )
 box = ax.get_position()
 ax.set_position([box.x0, box.y0, box.width , box.height* 0.8])
 plt.legend(ncol=4, bbox_to_anchor=(0, 1.18), loc='center left')
 plt.xlabel('Wall-clock time (s)\n(a)')
 plt.ylabel('Global Loss')
-plt.ylim(0.5, 3)
-plt.xlim(0, 25000)
+plt.ylim(0.8, 2.6)
+plt.xlim(0, 18000)
 
-name_list2 = ['BSP', 'SSP s=40', 'ADACOMM', 'Fixed\nADACOMM', 'STrain', 'BatchTune\nBSP', 'BatchTune\nFixed\nADACOMM']
+name_list2 = ['ADSP', 'BSP', 'SSP s=40', 'ADACOMM', 'Fixed\nADACOMM', 'BatchTune\nBSP', 'BatchTune\nFixed\nADACOMM']
 bar_width = 0.3
 ax = plt.subplot(122)
 ax.bar(
@@ -105,8 +118,8 @@ plt.xlabel('(b)')
 # plt.ylabel('Bandwidth (Mb/s)')
 # plt.xticks(rotation=90, fontsize=8)
 
-plt.subplots_adjust(top=0.78, bottom=0.18, left=0.08, right=0.95, hspace=0.45,
+plt.subplots_adjust(top=0.78, bottom=0.27, left=0.08, right=0.95, hspace=0.45,
                     wspace=0.35)
-plt.savefig("fig/compared2R2SP.pdf")()
+plt.savefig("fig/compared2R2SP.pdf")
 
 

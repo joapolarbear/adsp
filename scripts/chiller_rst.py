@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
-from utils import ret_list
+from utils import *
 
 def ret_conv_time(a, end, index=0):
 	cnt = 0
@@ -17,7 +18,7 @@ def ret_conv_time(a, end, index=0):
 		return point
 	else:
 		return 10000
-dir_name = "/Users/hhp/Desktop/STrainData&Record/resultData/amazon"
+dir_name = os.getenv("DATA_DIR")
 
 rail_ssp_s40 = ret_list(dir_name + '/20190318_01/ps_global_loss_ssp.txt')
 rail_strain = ret_list(dir_name + '/20190318_03/ps_global_loss_usp.txt')
@@ -43,9 +44,12 @@ plt.figure(num=4, figsize=(8, 3))
 
 
 ax = plt.subplot(121)
+window = 10
+k = 3
 for i in range(len(allList)):
-	ax.plot(allList[i][:, 0], allList[i][:, 3],
-		label=name_list[i])
+	ax.plot(allList[i][:, 0], savgol_filter(allList[i][:, 3], window, k),
+		label=name_list[i], linestyle=linestyle_str[i][1],
+        linewidth=linewidth)
 plt.legend()
 plt.xlabel('Wall-clock time (s)\n(a)')
 plt.ylabel('Global Loss')

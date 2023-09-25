@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
-from utils import ret_list
+from utils import *
 
 def ret_conv_time(a, end, index=0):
 	cnt = 0
@@ -18,7 +19,7 @@ def ret_conv_time(a, end, index=0):
 	else:
 		return 10000
 
-dir_name = "/Users/hhp/Desktop/STrainData&Record/resultData/amazon"
+dir_name = os.getenv("DATA_DIR")
 
 rail_ssp_s40 = ret_list(dir_name + '/20190311_02/ps_global_loss_ssp.txt')
 rail_strain = ret_list(dir_name + '/20190310_02/ps_global_loss_usp.txt')
@@ -50,8 +51,9 @@ plt.figure(num=4, figsize=(8, 6))
 ax = plt.subplot(221)
 plt.ylim(2.1, 2.8)
 for i in range(len(allList)):
-	ax.plot(allList[i][:, 0], allList[i][:, 3],  
-		linestyle='-',  
+	ax.plot(allList[i][:, 0], savgol_filter(allList[i][:, 3], 10, 3),  
+		linestyle=linestyle_str[i][1],
+        linewidth=linewidth,  
 		label=name_list[i])
 plt.legend(ncol=2, loc=2)
 plt.xlabel('Wall-clock time (s)\n(a)')
@@ -77,7 +79,8 @@ plt.yticks(rotation=90)
 ax = plt.subplot(223)
 for i in range(len(allList)):
 	ax.plot(allList[i][:, 0], allList[i][:, 2],  
-		linestyle='-',  
+		linestyle=linestyle_str[i][1],
+        linewidth=linewidth,  
 		label=name_list[i])
 plt.legend(loc=1)
 plt.xlabel('Wall-clock time (s)\n(c)')
@@ -87,8 +90,9 @@ plt.yticks(rotation=60)
 ax = plt.subplot(224)
 plt.ylim(2.1, 2.8)
 for i in range(len(allList)):
-	ax.plot(allList[i][:, 2], allList[i][:, 3],  
-		linestyle='-',  
+	ax.plot(allList[i][:, 2], savgol_filter(allList[i][:, 3], 10, 3),  
+		linestyle=linestyle_str[i][1],
+        linewidth=linewidth,  
 		label=name_list[i])
 plt.xlabel('# of Steps\n(d)')
 plt.xticks(rotation=30)
@@ -97,7 +101,7 @@ plt.ylabel('Global Loss')
 
 
 
-plt.subplots_adjust(top=0.92, bottom=0.15, left=0.10, right=0.95, hspace=0.3,
+plt.subplots_adjust(top=0.92, bottom=0.15, left=0.10, right=0.95, hspace=0.4,
                     wspace=0.25)
 plt.savefig("fig/rail_rst.pdf")
 

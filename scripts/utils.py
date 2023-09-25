@@ -1,5 +1,43 @@
 import os
 import numpy as np
+from scipy.signal import savgol_filter
+import seaborn as sns
+sns.set_theme(style="whitegrid", color_codes=True)
+tips = sns.load_dataset("tips")
+
+marks = ['/', 'x']
+
+linemarks = ["o", '*', 'X', 'd', 'v', 's', 'p', '^', 'h', 'P']
+marksize = 4
+
+# https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html
+linewidth = 1.5
+linestyle_str = [
+    # Named
+	('solid', 'solid'),      # Same as (0, ()) or '-'
+	('dashed', 'dashed'),    # Same as '--'
+ 	('dotted', 'dotted'),    # Same as (0, (1, 1)) or ':'
+	('dashdot', 'dashdot'),  # Same as '-.'
+
+	# Parameterized
+ 	('densely dashdotdotted', (0, (3, 1, 1, 1, 1, 1))),
+  	('dashdotdotted',         (0, (3, 5, 1, 5, 1, 5))),
+	# ('loosely dotted',        (0, (1, 10))),
+	# ('dotted',                (0, (1, 1))),
+	# ('densely dotted',        (0, (1, 1))),
+	('long dash with offset', (5, (10, 3))),
+	# ('loosely dashed',        (0, (5, 10))),
+	# ('dashed',                (0, (5, 5))),
+	('densely dashed',        (0, (5, 1))),
+
+	# ('loosely dashdotted',    (0, (3, 10, 1, 10))),
+	('dashdotted',            (0, (3, 5, 1, 5))),
+	# ('densely dashdotted',    (0, (3, 1, 1, 1))),
+
+	
+	('loosely dashdotdotted', (0, (3, 10, 1, 10, 1, 10))),
+ ]
+
 
 def ret_list(filename):
 	lines = [[float(x) for x in line.rstrip('\n').split(',')] for line in open(filename)]

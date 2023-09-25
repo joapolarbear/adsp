@@ -3,7 +3,7 @@ import numpy as np
 import copy
 import os
 
-from utils import ret_list
+from utils import *
 
 def ret_conv_time(a, end, index=0):
 	cnt = 0
@@ -67,7 +67,9 @@ for i in range(len(allList)):
 	ax.plot(allList[i][:, 0], allList[i][:, 3], 
 		# marker='.', 
 		# markeredgecolor='red',
-		# markeredgewidth=2, 
+		# markeredgewidth=2,
+		linestyle=linestyle_str[i][1],
+        linewidth=linewidth,
 		label=name_list[i])
 plt.legend(loc=1)
 plt.xlabel('Wall-clock time (s)')

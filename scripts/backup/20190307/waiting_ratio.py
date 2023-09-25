@@ -1,7 +1,7 @@
 # plot the waiting time vs computation time
 
 import matplotlib.pyplot as plt
-
+from utils import *
 # step, time, [cmp_t, ...], avg_cmp_time, cmp_ratio, waiting_ratio
 bsp = [609, 2238, [107.547, 87.621, 309.276]]
 ssp_s40 = [603, 1974, [109.949, 89.227, 263.697]]
@@ -40,15 +40,17 @@ wariting_time_list = [
 cmp_time_list = [bsp[3], ssp_s40[3], ada[3], alter_s40[3]]
 waiting_ratio_list = [bsp[-1], ssp_s40[-1], ada[-1], alter_s40[-1]]
 
-plt.bar(
+bars = plt.bar(
 	range(len(name_list)),
 	wariting_time_list,
 	label='Waiting time',
 	# fc='orange',
 	width=bar_width,
 	)
+for bar in bars:
+	bar.set_hatch(marks[0])
 
-plt.bar(
+bars = plt.bar(
 	range(len(name_list)),
 	cmp_time_list,
 	label='Cmp Time',
@@ -57,6 +59,8 @@ plt.bar(
 	# fc='blue',
 	tick_label = name_list,
 	)
+for bar in bars:
+	bar.set_hatch(marks[1])
 plt.legend(fontsize = font_size)
 plt.tick_params(axis='both', which='major', labelsize=15)
 plt.ylabel("Time to Train 600 Steps", fontsize = font_size)

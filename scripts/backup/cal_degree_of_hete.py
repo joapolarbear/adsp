@@ -2,6 +2,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
 sleeptimeOfLast7WK = 0
 
@@ -22,7 +23,7 @@ def ret_list2(filename):
 def cal_hete(l):
 	return sum(l) / float(min(l) * len(l))
 
-dir_name = "/Users/hhp/Desktop/STrainData&Record/resultData/amazon"
+dir_name = os.getenv("DATA_DIR")
 cifar_strain = ret_list2(dir_name + '/20190304_05/ps_hete_usp.txt')
 
 for i in range(len(cifar_strain)):

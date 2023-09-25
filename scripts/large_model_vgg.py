@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-from utils import ret_list
+from utils import *
 
 
 def normalize(l1, l2, l3, time):
@@ -29,15 +29,16 @@ allList = [usp, ssp, bsp,
 	ada, 
 	fixed_ada
 	]
-name_list = ['STrain', 'SSP s=40', 'BSP', 
+name_list = ['ADSP', 'SSP s=40', 'BSP', 
 	'ADACOMM', 
 	'Fixed ADACOMM\n tau=40'
 	]
 
-plt.figure(num=4, figsize=(8, 6))
+plt.figure(num=4, figsize=(8, 4))
 ax = plt.subplot(111)
 for j in range(len(allList)):
-	ax.plot(allList[j][:, 0], allList[j][:, -1], label=name_list[j])
+	ax.plot(allList[j][:, 0], allList[j][:, -1], label=name_list[j], 
+        linestyle=linestyle_str[j][1], linewidth=linewidth)
 plt.ylabel('Global Loss')
 plt.xlabel('Wall-Clock Time (s) \n')
 plt.ylim(10.9, 11.2)
@@ -47,8 +48,9 @@ plt.ylim(10.9, 11.2)
 plt.legend()
 
 # plt.title('Time Distribution with STrain')
-plt.subplots_adjust(top=0.93, bottom=0.16, left=0.1, right=0.95, hspace=0.4,
-                    wspace=0.3)
+# plt.subplots_adjust(top=0.93, bottom=0.16, left=0.1, right=0.95, hspace=0.4,
+#                     wspace=0.3)
+plt.tight_layout()
 plt.savefig("fig/large_model_vgg.pdf")
 
 

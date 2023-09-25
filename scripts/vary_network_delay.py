@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-from utils import ret_list
+from utils import *
 
 
 name_list = ['ADSP', 'SSP s=40', 'BSP', 'ADACOMM', '\nFixed ADACOMM\n tau=40']
@@ -58,7 +58,8 @@ plt.figure(num=4, figsize=(8, 6))
 for i in range(4):
 	ax = plt.subplot(220 + i + 1)
 	for j in range(len(lossList[i])):
-		ax.plot(lossList[i][j][:, 0], lossList[i][j][:, -1], label=name_list[j])
+		ax.plot(lossList[i][j][:, 0], lossList[i][j][:, -1], \
+      		label=name_list[j], linestyle=linestyle_str[j][1], linewidth=linewidth)
 	plt.ylabel('Global Loss')
 	plt.xlabel('Wall-Clock Time (s) \n' + subtitle[i])
 	if(i == 0):
@@ -68,7 +69,7 @@ for i in range(4):
 
 
 # plt.title('Time Distribution with STrain')
-plt.subplots_adjust(top=0.8, bottom=0.1, left=0.1, right=0.95, hspace=0.4,
+plt.subplots_adjust(top=0.8, bottom=0.15, left=0.1, right=0.95, hspace=0.5,
                     wspace=0.3)
 plt.savefig("fig/vary_network_delay.pdf")
 

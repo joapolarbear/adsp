@@ -3,7 +3,7 @@ import numpy as np
 import copy
 import os
 
-from utils import ret_list
+from utils import *
 
 def ret_conv_time(a, end, index=0):
 	cnt = 0
@@ -51,9 +51,13 @@ usp_all2 = ret_list(data_dir + '/20190430_01/ps_global_loss_usp.txt')
 name_list = ['ADSP', 'SSP s=40', 'BSP', 'Fixed ADACOMM tau=40', 'ADSP++']
 allList = [usp, ssp, bsp, fixed_ada, usp_all2]
 ax = plt.subplot(122)
+window = 10
+k = 3
 for i in range(len(allList)):
-	ax.plot(allList[i][:, 0], allList[i][:, -1],
-		label=name_list[i])
+	ax.plot(allList[i][:, 0], savgol_filter(allList[i][:, -1], window, k),
+		label=name_list[i],
+  		linestyle=linestyle_str[i][1],
+        linewidth=linewidth,)
 usp_all2_searchtime = [[2.922, 4779.682], [5801.2796, 6982.675], [1000000, 1000000]]
 # usp_all2_searchtime = [[15.94, 3630.282], [4648.93, 5863.823], [1000000, 1000000]]
 usp_all2_nowait = []
@@ -68,14 +72,17 @@ for data in usp_all2:
 			usp_all2_nowait.append([data[0] - s_time, data[1], data[2], data[3]])
 			break
 usp_all2_nowait = np.array(usp_all2_nowait)
-ax.plot(usp_all2_nowait[:, 0], usp_all2_nowait[:, -1], label='ADSP++(excluding\nthe search time)')
+ax.plot(usp_all2_nowait[:, 0], savgol_filter(usp_all2_nowait[:, -1], window, k),
+        label='ADSP++(excluding\nthe search time)',
+        linestyle=linestyle_str[i][1],
+        linewidth=linewidth,)
 box = ax.get_position()
 ax.set_position([box.x0, box.y0, box.width , box.height* 0.8])
 plt.legend(ncol=4, bbox_to_anchor=(-1.38, 1.23), loc='center left')
 plt.ylabel('Gloabl Loss')
 plt.xlabel('Time (s)\n(b)')
 
-plt.subplots_adjust(top=0.72, bottom=0.18, left=0.1, right=0.95, hspace=0.45,
+plt.subplots_adjust(top=0.72, bottom=0.25, left=0.1, right=0.95, hspace=0.45,
                     wspace=0.35)
 plt.savefig(os.path.join("fig", "bandwidth_offline_search_hypeparameter.pdf"))
 

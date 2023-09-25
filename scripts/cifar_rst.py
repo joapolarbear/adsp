@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
-from utils import ret_list
+from utils import *
 
 def ret_conv_time(a, end, index=0):
 	cnt = 0
@@ -16,8 +17,7 @@ def ret_conv_time(a, end, index=0):
 			break
 	return 1000000
 
-dir_name = "/Users/hhp/Desktop/STrainData&Record/resultData/amazon"
-
+dir_name = os.getenv("DATA_DIR")
 
 cifar_ssp_s40 = ret_list(dir_name + '/20190304_02/ps_global_loss_ssp.txt')
 cifar_strain = ret_list(dir_name + '/20190304_05/ps_global_loss_usp.txt')
@@ -57,9 +57,10 @@ plt.ylim(0.5, 3.5)
 for i in range(len(allList)):
 	# if(i > 0 and i < len(allList) - 1):
 	# if((i != len(allList) - 1) and (i != 0)):
-	ax.plot(allList[i][:stop_index[i], 0], allList[i][:stop_index[i], 3],  
-			linestyle='-',  
-			label=name_list[i])
+	ax.plot(allList[i][:stop_index[i], 0], savgol_filter(allList[i][:stop_index[i], 3], 10, 3),
+			label=name_list[i],
+   			linestyle=linestyle_str[i][1],
+        	linewidth=linewidth,)
 	# else:
 	# 	ax.plot(allList[i][:, 0], allList[i][:, 3],  
 	# 		linestyle='-',  
@@ -104,7 +105,8 @@ plt.yticks(rotation=90)
 ax = plt.subplot(223)
 for i in range(len(allList)):
 	ax.plot(allList[i][:stop_index[i], 0], allList[i][:stop_index[i], 2], 
-		linestyle='-', 
+		linestyle=linestyle_str[i][1],
+        linewidth=linewidth,
 		# marker='.', 
 		# markeredgecolor='red',
 		# markeredgewidth=2, 
@@ -117,17 +119,17 @@ plt.yticks(rotation=60)
 ax = plt.subplot(224)
 plt.ylim(0.5, 3.5)
 for i in range(len(allList)):
-	ax.plot(allList[i][:, 2], allList[i][:, 3], 
-		linestyle='-',  
+	ax.plot(allList[i][:, 2], savgol_filter(allList[i][:, 3], 10, 3), 
+		linestyle=linestyle_str[i][1],
+        linewidth=linewidth, 
 		label=name_list[i])
 plt.legend()
 plt.xlabel('# of Steps \n (d)')
 plt.ylabel('Global Loss')
 
-
-
-plt.subplots_adjust(top=0.92, bottom=0.1, left=0.10, right=0.95, hspace=0.28,
-                    wspace=0.2)
+# plt.subplots_adjust(top=0.92, bottom=0.12, left=0.10, right=0.95, hspace=0.28,
+#                     wspace=0.2)
+plt.tight_layout()
 plt.savefig("fig/cifar_rst.pdf")
 
 
